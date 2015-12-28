@@ -11,13 +11,11 @@ num_labels = 10;          % 10 labels, from 0 to 9
 % Load the images
 fprintf('Loading Data ...\n');
 raw_data = prnist(0:9, 1:2:1000);
-raw_data2 = prnist(0:9, 2:2:1000);
 
 % Preprocess
 % preproc = im_box([],0,1)*im_rotate*im_resize([],[20 20])*im_box([],1,0); % aligned
 preproc = im_box([],0,1)*im_resize([],[25 25])*im_box([],1,0);  % not aligned
 im = raw_data * preproc *datasetm;
-im2 = raw_data2 * preproc *datasetm;
 
 % Show
 figure(1);
@@ -29,8 +27,6 @@ for i = 1:10
     labs = [labs; i*ones(500,1)];
 end
 a = prdataset(+im,labs);
-a2 = prdataset(+im2,labs);
-
 
 % split the whole dataset by 80 %
 [trData, tstData] = gendat(a,0.8);
@@ -56,22 +52,17 @@ w5 = trData5 * u;
 w_all = [w1 w2 w3 w4 w5] * maxc;
 
 % test on tstData
-cls = a2*w_all*labeld;
-tstLabs = a2.nlab;
+cls = tstData*w_all*labeld;
+tstLabs = tstData.nlab;
 
-% cls1 = tstData*w1*labeld;
-% cls2 = tstData*w2*labeld;
-% cls3 = tstData*w3*labeld;
-% cls4 = tstData*w4*labeld;
-% cls5 = tstData*w5*labeld;
-% 
-% for i = 1:1000
-%     
-%     cls1(i);
-%     
-% end
-
-
+cls1 = tstData1*w_all*labeld;
+tstLabs1 = tstData1.nlab;
+cls2 = tstData2*w_all*labeld;
+tstLabs2 = tstData2.nlab;
+cls = tstData*w_all*labeld;
+tstLabs = tstData.nlab;
+cls = tstData*w_all*labeld;
+tstLabs = tstData.nlab;
 % calculate the error
 corr = cls==tstLabs;
 err = sum(corr(:) == 0)/numel(corr);
