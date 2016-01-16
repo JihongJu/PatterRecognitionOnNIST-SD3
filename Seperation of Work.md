@@ -6,4 +6,6 @@
 
 3\. Classifiers: SVM, Knn, Combination, kernels: Yuliang
 
-4\. Dissimilarity: Whoevery has time
+4\. Dissimilarity: Jihong
+
+**Deadline: 16/Jan/2016 5:00 p.m.**
