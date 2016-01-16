@@ -26,7 +26,7 @@ show(im);
 % labels
 labs = [];
 for i = 1:10
-    labs = [labs; i*ones(500,1)];
+    labs = [labs; (i-1)*ones(500,1)];
 end
 a = prdataset(+im,labs);
 a2 = prdataset(+im2,labs);
@@ -57,20 +57,29 @@ w_all = [w1 w2 w3 w4 w5] * maxc;
 
 % test on tstData
 cls = a2*w_all*labeld;
-tstLabs = a2.nlab;
+tstLabs = a2.nlab - 1;
 
-% cls1 = tstData*w1*labeld;
-% cls2 = tstData*w2*labeld;
-% cls3 = tstData*w3*labeld;
-% cls4 = tstData*w4*labeld;
-% cls5 = tstData*w5*labeld;
-% 
-% for i = 1:1000
+% cls1 = a2*w1*labeld;
+% cls2 = a2*w2*labeld;
+% cls3 = a2*w3*labeld;
+% cls4 = a2*w4*labeld;
+% cls5 = a2*w5*labeld;
+
+% for i = 1:5000
 %     
-%     cls1(i);
+%     X = zeros(10);
+%     
+%     X(cls1(i)+1) = X(cls1(i)+1) + 1;
+%     X(cls2(i)+1) = X(cls2(i)+1) + 1;
+%     X(cls3(i)+1) = X(cls3(i)+1) + 1;
+%     X(cls4(i)+1) = X(cls4(i)+1) + 1;
+%     X(cls5(i)+1) = X(cls5(i)+1) + 1;
+%     
+%     [M,I] = max(X(:));
+%     
+%     cls(i) = I-1;
 %     
 % end
-
 
 % calculate the error
 corr = cls==tstLabs;
