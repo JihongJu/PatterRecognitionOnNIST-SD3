@@ -1,5 +1,7 @@
 %% Initialise workspace
 clear ; close all; clc;
+% N = prmemory(2^26);
+
 
 %% Setup the parameters
 % ANN
@@ -25,7 +27,8 @@ a = my_rep(raw_data);
 % KNN
 % u = scalem([], 'variance') * pcam([],0.6) * knnc;
 % parzenc with PCA
-u = scalem([], 'variance') * pcam([],0.6) * parzenc;
+u = parzenc;
+% u = scalem([], 'variance') * pcam([],0.6) * parzenc;
 % qdc
 % fisherc
 % u = scalem([], 'variance') * pcam([],0.6) * fisherc;
@@ -36,47 +39,49 @@ u = scalem([], 'variance') * pcam([],0.6) * parzenc;
 e1 = prcrossval(trData,u,10,1);
 
 %% Training
-% simple train
-% w = trData * u;
-
+% % simple train
+w = trData * u;
+% w = trData * (u * setbatch);
+% 
 % split, train and combine
 % trData1
-for i = 1:10
-    objects{i,1} = 101:400;
-end
-trData1 = seldat(trData,[],[],objects);
-% trData2
-for i = 1:10
-    objects{i,1} = cat(2,1:100,201:400);
-end
-trData2 = seldat(trData,[],[],objects);
-% trData3
-for i = 1:10
-    objects{i,1} = cat(2,1:200,301:400);
-end
-trData3 = seldat(trData,[],[],objects);
-% trData4
-for i = 1:10
-    objects{i,1} = 1:300;
-end
-trData4 = seldat(trData,[],[],objects);
-
-% train
-w1 = trData1 * u;
-w2 = trData2 * u;
-w3 = trData3 * u;
-w4 = trData4 * u;
+% for i = 1:10
+%     objects{i,1} = 101:400;
+% end
+% trData1 = seldat(trData,[],[],objects);
+% % trData2
+% for i = 1:10
+%     objects{i,1} = cat(2,1:100,201:400);
+% end
+% trData2 = seldat(trData,[],[],objects);
+% % trData3
+% for i = 1:10
+%     objects{i,1} = cat(2,1:200,301:400);
+% end
+% trData3 = seldat(trData,[],[],objects);
+% % trData4
+% for i = 1:10
+%     objects{i,1} = 1:300;
+% end
+% trData4 = seldat(trData,[],[],objects);
+% 
+% % train
+% w1 = trData1 * u;
+% w2 = trData2 * u;
+% w3 = trData3 * u;
+% w4 = trData4 * u;
 
 % combine
-w = [w1 w2 w3 w4] * maxc;
-
-%% Testing
-cls = tstData * w * labeld;
+% w = [w1 w2 w3 w4] * maxc;
 
 
-%% Calculate the error
-tstLabs = tstData.nlab - 1;
-corr = cls==tstLabs;
-err = sum(corr(:) == 0)/numel(corr);
+%% Evaluation
+[e, c] = tstData * w * testc;
+e2 = nist_eval('my_rep',w,100);
+
+%% Disimilarities
+% D = tstData * (trData * proxm('m',1));% Euclidean dissimilarity matrix
+% [e,c] = (1-D)*testc;            % classification
+
 
 prwaitbar off;
