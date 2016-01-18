@@ -8,4 +8,4 @@ Matlab Pattern Recognition Toolbox PRTools (http://prtools.org/) was utilized to
 ##Choice of representation
 1. Pixels
 2. Features
-3. Dissimilarities (PCA)
+3. Dissimilarities
