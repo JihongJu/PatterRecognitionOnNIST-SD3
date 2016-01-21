@@ -2,49 +2,47 @@
 clear ; close all; clc;
 % N = prmemory(2^26);
 
-
 %% Setup the parameters
-% ANN
-input_layer_size  = 625;  % 20x20 Input Images of Digits
-hidden_layer_size = [50 50 50];   % one layer, each with 50 hidden units
-num_iter = 500;          % 500 iterations
-num_labels = 10;          % 10 labels, from 0 to 9
+% PCA
+frac = 0.95; % Fraction of cumulative variance (> 0 & < 1) to retain
 
 %% Load data
 fprintf('Loading Data ...\n');
-raw_data = prnist(0:9, 1:2:1000);
+raw_data = prnist(0:9, 1:1:1000);
 
 %% Preprocess
 a = my_rep(raw_data);
 
 %% Split the whole dataset by 80 %
-[trData, tstData] = gendat(a,0.8);
+[trData, tstData] = gendat(a,0.8); % for n = 1000
+% [trData, tstData] = gendat(a,0.5); % for n =10
+%% Train, evaluate and test with pca
+% [e1_nmc, e_nmc, e2_nmc] = single_classifier(trData, tstData,'nmc',frac);
+% [e1_ldc, e_ldc, e2_ldc] = single_classifier(trData, tstData,'ldc',frac);
+% [e1_qdc, e_qdc, e2_qdc] = single_classifier(trData, tstData,'qdc',frac);
+% [e1_fisherc, e_fisherc, e2_fisherc] = single_classifier(trData, tstData,'fisherc',frac);
+% [e1_loglc, e_loglc, e2_loglc] = single_classifier(trData, tstData,'loglc',frac);
 
-%% Classifiers
-% ANN
-% [u_bpxnc, h] = bpxnc([], hidden_layer_size, num_iter);
-% u = scalem([], 'variance') * pcam([],0.6) * u_bpxnc;
-% KNN
-% u = scalem([], 'variance') * pcam([],0.6) * knnc;
-% parzenc with PCA
-u = parzenc;
-% u = scalem([], 'variance') * pcam([],0.6) * parzenc;
-% qdc
-% fisherc
-% u = scalem([], 'variance') * pcam([],0.6) * fisherc;
-% RandomForest
-% u = scalem([], 'variance') * pcam([],0.6) * randomforestc;
+% [e1_knnc, e_knnc, e2_knnc] = single_classifier(trData, tstData,'knnc',frac);
+% [e1_parzenc, e_parzenc, e2_parzenc] = single_classifier(trData, tstData,'parzenc',frac);
+% [e1_bpxnc, e_bpxnc, e2_bpxnc] = single_classifier(trData, tstData,'bpxnc',frac);
 
-%% Cross-Validation
-e1 = prcrossval(trData,u,10,1);
+% [e1_svc, e_svc, e2_svc] = single_classifier(trData, tstData,'svc',frac);
+
+%% find best frac
+e1 =[]; e = []; e2 = [];
+for i = 0.05:0.05:1
+    [e1_knnc, e_knnc, e2_knnc] = single_classifier(trData, tstData,'knnc',i);
+    e1 = [e1,e1_knnc]; e = [e,e_knnc]; e2 = [e2,e2_knnc];
+    if e1_knnc < e1
+        frac = i;
+    end
+end
 
 %% Training
-% % simple train
-w = trData * u;
-% w = trData * (u * setbatch);
 % 
-% split, train and combine
-% trData1
+% % split, train and combine
+% % trData1
 % for i = 1:10
 %     objects{i,1} = 101:400;
 % end
@@ -64,20 +62,22 @@ w = trData * u;
 %     objects{i,1} = 1:300;
 % end
 % trData4 = seldat(trData,[],[],objects);
+
+% %Random split
+% [trData1,rest] = gendat(trData, 0.8);
+% [trData2,rest] = gendat(trData, 0.8);
+% [trData3,rest] = gendat(trData, 0.8);
+% [trData4,rest] = gendat(trData, 0.8);
 % 
 % % train
 % w1 = trData1 * u;
 % w2 = trData2 * u;
 % w3 = trData3 * u;
 % w4 = trData4 * u;
-
-% combine
+% 
+% % combine
 % w = [w1 w2 w3 w4] * maxc;
 
-
-%% Evaluation
-[e, c] = tstData * w * testc;
-e2 = nist_eval('my_rep',w,100);
 
 %% Disimilarities
 % D = tstData * (trData * proxm('m',1));% Euclidean dissimilarity matrix
