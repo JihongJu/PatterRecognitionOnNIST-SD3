@@ -6,8 +6,8 @@ function [e1,e,e2,c] = single_classifier(trData,tstData,clr,frac)
 
 %% Setup the parameters
 % ANN
-input_layer_size  = 625;  % 20x20 Input Images of Digits
-hidden_layer_size = [50 50 50];   % one layer, each with 50 hidden units
+input_layer_size  = 400;  % 20x20 Input Images of Digits
+hidden_layer_size = [15 15 15];   % one layer, each with 50 hidden units
 num_iter = 500;          % 500 iterations
 num_labels = 10;          % 10 labels, from 0 to 9
 
@@ -54,7 +54,7 @@ end
 
 % SVM
 if strcmp(clr,'svc')
-    kernel = proxm('p',1);
+    kernel = proxm('p',1); % default linear kernel
     u = scalem([], 'variance') * pcam([],frac) * svc(kernel);
 end
 
@@ -73,7 +73,6 @@ w = trData * u;
 
 %% Evaluation
 [e, c] = tstData * w * testc;
-e2 = 0;
-% e2 = nist_eval('my_rep',w,100);
+e2 = nist_eval('my_rep',w,100);
 
 end
