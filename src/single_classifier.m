@@ -1,4 +1,4 @@
-function [e1,e,e2,c] = single_classifier(trData,tstData,clr,frac)
+function [e1,e,e2,e3,c] = single_classifier(trData,tstData,exData,clr,frac)
 % trData: training data
 % tstData: test data
 % clr:classifier
@@ -64,6 +64,7 @@ if strcmp(clr,'randomforestc')
 end
 
 %% Cross-Validation
+e1 = 0;
 e1 = prcrossval(trData,u,10,1);   % for n =1000
 % e1 = prcrossval(trData,u,10,10); % for n = 10
 
@@ -72,7 +73,16 @@ e1 = prcrossval(trData,u,10,1);   % for n =1000
 w = trData * u;
 
 %% Evaluation
-[e, c] = tstData * w * testc;
+% e = 0;
+e = tstData * w * testc;
+% e2 = 0;
 e2 = nist_eval('my_rep',w,100);
+
+%% Live Test
+% e3 = 0;
+[e3, c] = exData * w * testc;
+
+
+
 
 end

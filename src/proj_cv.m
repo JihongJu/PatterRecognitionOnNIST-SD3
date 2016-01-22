@@ -10,26 +10,41 @@ frac = 0.7; % Fraction of cumulative variance (> 0 & < 1) to retain
 %% Load data
 fprintf('Loading Data ...\n');
 raw_data = prnist(0:9, 1:1:1000);
+labels = getlabels(raw_data);
+
+% Extra data
+[extra_data,nlabls,labls] = loadImage('example_digits.png');
+extra_data.nlab = nlabls;
+extra_data = setlabels(extra_data,labls);
+
+
 
 %% Preprocess
 a = my_rep(raw_data);
+exData = my_rep(extra_data);
+
+%% Show
+% figure(1);
+% show(raw_data);
+% figure(2);
+% show(extra_data)
 
 %% Split the whole dataset by 80 %
 [trData, tstData] = gendat(a,0.8); % for n = 1000
 % [trData, tstData] = gendat(a,0.5); % for n =10
 %% Train, evaluate and test with pca
-% [e1_nmc, e_nmc, e2_nmc] = single_classifier(trData, tstData,'nmc',frac);
-% [e1_ldc, e_ldc, e2_ldc] = single_classifier(trData, tstData,'ldc',frac);
-% [e1_qdc, e_qdc, e2_qdc] = single_classifier(trData, tstData,'qdc',frac);
-% [e1_fisherc, e_fisherc, e2_fisherc] = single_classifier(trData, tstData,'fisherc',frac);
-% [e1_loglc, e_loglc, e2_loglc] = single_classifier(trData, tstData,'loglc',frac);
+% [e1_nmc, e_nmc, e2_nmc, e3_nmc] = single_classifier(trData, tstData, exData, 'nmc',frac);
+% [e1_ldc, e_ldc, e2_ldc, e3_ldc] = single_classifier(trData, tstData, exData, 'ldc',frac);
+% [e1_qdc, e_qdc, e2_qdc, e3_qdc] = single_classifier(trData, tstData, exData, 'qdc',frac);
+% [e1_fisherc, e_fisherc, e2_fisherc,  e3_fisherc] = single_classifier(trData, exData,  tstData,'fisherc',frac);
+% [e1_loglc, e_loglc, e2_loglc, e3_loglc] = single_classifier(trData, tstData, exData, 'loglc',frac);
 % 
-% [e1_knnc, e_knnc, e2_knnc] = single_classifier(trData, tstData,'knnc',frac);
-% [e1_parzenc, e_parzenc, e2_parzenc] = single_classifier(trData, tstData,'parzenc',frac);
-% [e1_bpxnc, e_bpxnc, e2_bpxnc] = single_classifier(trData, tstData,'bpxnc',frac);
+[e1_knnc, e_knnc, e2_knnc, e3_knnc] = single_classifier(trData, tstData, exData, 'knnc',frac);
+% [e1_parzenc, e_parzenc, e2_parzenc, e3_parzenc] = single_classifier(trData, tstData, exData, 'parzenc',frac);
+% [e1_bpxnc, e_bpxnc, e2_bpxnc, e3_bpxnc] = single_classifier(trData, tstData, exData, 'bpxnc',frac);
 
-[e1_svc, e_svc, e2_svc] = single_classifier(trData, tstData,'svc',frac);
-[e1_randomforestc, e_randomforestc, e2_randomforestc] = single_classifier(trData, tstData,'randomforestc',frac);
+% [e1_svc, e_svc, e2_svc,  e3_svc] = single_classifier(trData, tstData, exData, 'svc',frac);
+[e1_randomforestc, e_randomforestc, e2_randomforestc, e3_randomforestc] = single_classifier(trData, tstData, exData, 'randomforestc',frac);
 
 %% Train, evaluate and test with disimilarities
 % [e1_dis, e_dis] = diss_classifier(trData,tstData,'');
@@ -49,9 +64,14 @@ a = my_rep(raw_data);
 %% find best frac for PCA
 % e1 =[]; e = []; e2 = [];
 % for i = 0.05:0.05:1
+% %     [e1_qdc, e_qdc, e2_qdc] = single_classifier(trData, tstData,'qdc',i);
+% %     e1 = [e1,e1_qdc]; e = [e,e_qdc]; e2 = [e2,e2_qdc];
+% %     if e1_qdc < e1
+% %         frac = i;
+% %     end
 %     [e1_knnc, e_knnc, e2_knnc] = single_classifier(trData, tstData,'knnc',i);
 %     e1 = [e1,e1_knnc]; e = [e,e_knnc]; e2 = [e2,e2_knnc];
-%     if e1_knnc < e1
+%     if e1_knn < e1
 %         frac = i;
 %     end
 % end
