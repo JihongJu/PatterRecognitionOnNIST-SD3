@@ -39,12 +39,12 @@ exData = my_rep(extra_data);
 % [e1_fisherc, e_fisherc, e2_fisherc,  e3_fisherc] = single_classifier(trData, exData,  tstData,'fisherc',frac);
 % [e1_loglc, e_loglc, e2_loglc, e3_loglc] = single_classifier(trData, tstData, exData, 'loglc',frac);
 % 
-[e1_knnc, e_knnc, e2_knnc, e3_knnc] = single_classifier(trData, tstData, exData, 'knnc',frac);
+% [e1_knnc, e_knnc, e2_knnc, e3_knnc] = single_classifier(trData, tstData, exData, 'knnc',frac);
 % [e1_parzenc, e_parzenc, e2_parzenc, e3_parzenc] = single_classifier(trData, tstData, exData, 'parzenc',frac);
 % [e1_bpxnc, e_bpxnc, e2_bpxnc, e3_bpxnc] = single_classifier(trData, tstData, exData, 'bpxnc',frac);
 
 % [e1_svc, e_svc, e2_svc,  e3_svc] = single_classifier(trData, tstData, exData, 'svc',frac);
-[e1_randomforestc, e_randomforestc, e2_randomforestc, e3_randomforestc] = single_classifier(trData, tstData, exData, 'randomforestc',frac);
+% [e1_randomforestc, e_randomforestc, e2_randomforestc, e3_randomforestc] = single_classifier(trData, tstData, exData, 'randomforestc',frac);
 
 %% Train, evaluate and test with disimilarities
 % [e1_dis, e_dis] = diss_classifier(trData,tstData,'');
@@ -59,6 +59,33 @@ exData = my_rep(extra_data);
 % [e1_dis_bpxnc, e_dis_bpxnc] = diss_classifier(trData,tstData,'bpxnc');
 % 
 % [e1_dis_svc, e_dis_svc] = diss_classifier(trData,tstData,'svc');
+
+
+%% Combined Classifier Training
+
+% Sampling with replacement
+[trData1,~] = gendat(trData, 0.8);
+[trData2,~] = gendat(trData, 0.8);
+% [trData3,rest] = gendat(trData, 0.8);
+% [trData4,rest] = gendat(trData, 0.8);
+
+% train
+w1 = trData1 * (scalem([], 'variance') * pcam([],frac) * knnc);
+w2 = trData2 * (scalem([], 'variance') * pcam([],frac) * qdc);
+% w3 = trData3 * u;
+% w4 = trData4 * u;
+
+% combine
+w = [w1 w2] * maxc;
+
+% evaluation
+e_combined = tstData * w * testc;
+e2_combined = nist_eval('my_rep',w,100);
+e3_combined = exData * w * testc;
+
+% compare with single classifier
+[e1_qdc, e_qdc, e2_qdc, e3_qdc] = single_classifier(trData1, tstData, exData, 'qdc',frac);
+[e1_knnc, e_knnc, e2_knnc, e3_knnc] = single_classifier(trData1, tstData, exData, 'knnc',frac);
 
 
 %% find best frac for PCA
@@ -76,8 +103,8 @@ exData = my_rep(extra_data);
 %     end
 % end
 
-%% Multiple Classifier Training
-% 
+
+%% n-fold training
 % % split, train and combine
 % % trData1
 % for i = 1:10
@@ -99,23 +126,6 @@ exData = my_rep(extra_data);
 %     objects{i,1} = 1:300;
 % end
 % trData4 = seldat(trData,[],[],objects);
-
-% %Random split
-% [trData1,rest] = gendat(trData, 0.8);
-% [trData2,rest] = gendat(trData, 0.8);
-% [trData3,rest] = gendat(trData, 0.8);
-% [trData4,rest] = gendat(trData, 0.8);
-% 
-% % train
-% w1 = trData1 * u;
-% w2 = trData2 * u;
-% w3 = trData3 * u;
-% w4 = trData4 * u;
-% 
-% % combine
-% w = [w1 w2 w3 w4] * maxc;
-
-
 
 
 

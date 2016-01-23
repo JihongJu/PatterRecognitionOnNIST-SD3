@@ -64,7 +64,7 @@ if strcmp(clr,'randomforestc')
 end
 
 %% Cross-Validation
-e1 = 0;
+% e1 = 0;
 e1 = prcrossval(trData,u,10,1);   % for n =1000
 % e1 = prcrossval(trData,u,10,10); % for n = 10
 
