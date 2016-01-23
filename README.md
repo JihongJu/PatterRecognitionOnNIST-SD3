@@ -9,3 +9,8 @@ Matlab Pattern Recognition Toolbox PRTools (http://prtools.org/) was utilized to
 1. Pixels
 2. Features
 3. Dissimilarities
+
+##Log
+1. pca_frac.csv used to plot (performance vs. fraction);
+2. combined_knnc_qdc.csv compares combined classifier vs. single classifier;
+3. pca_all_classifiers.csv shows performance of all classifiers (except svm) with e1-cv error, e-test error, e2-test error using lab testset, e3-live test(using handwritten digits images example_digits.png)
