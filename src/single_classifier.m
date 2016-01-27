@@ -15,47 +15,49 @@ num_labels = 10;          % 10 labels, from 0 to 9
 % Parametric
 % Nearest Mean
 if strcmp(clr,'nmc')
-    u = scalem([], 'variance') * pcam([],frac) * nmc;
+    u = pcam([],frac) * nmc;
 end
 % Linear Bayes Normal Classifier 
 if strcmp(clr,'ldc')
-    u = scalem([], 'variance') * pcam([],frac) * ldc;
+    u = pcam([],frac) * ldc;
 end
 % qdc
 if strcmp(clr,'qdc')
-    u = scalem([], 'variance') * pcam([],frac) * qdc;
+    u = pcam([],frac) * qdc;
 end
 % fisherc
 if strcmp(clr,'fisherc')
-    u = scalem([], 'variance') * pcam([],frac) * fisherc;
+    u = pcam([],frac) * fisherc;
 end
 % loglc
 if strcmp(clr,'loglc')
-    u = scalem([], 'variance') * pcam([],frac) * loglc;
+    u = pcam([],frac) * loglc;
 end
 
 % Non-parametric
 % KNN
 if strcmp(clr,'knnc')
-    u = scalem([], 'variance') * pcam([],frac) * knnc;
+    u = pcam([],frac) * knnc;
 end
 % parzenc with PCA
 if strcmp(clr,'parzenc')
     % u = parzenc;
-    u = scalem([], 'variance') * pcam([],frac) * parzenc;
+    u = pcam([],frac) * parzenc;
 end
 
 % Advanced
 % ANN
 if strcmp(clr,'bpxnc')
     [u_bpxnc, h] = bpxnc([], hidden_layer_size, num_iter);
-    u = scalem([], 'variance') * pcam([],frac) * u_bpxnc;
+    u = pcam([],frac) * u_bpxnc;
 end
 
 % SVM
 if strcmp(clr,'svc')
-    kernel = proxm('p',1); % default linear kernel
-    u = scalem([], 'variance') * pcam([],frac) * svc(kernel);
+%     kernel = proxm('p',1); % default linear kernel
+    kernel = proxm('r');
+%     kernel = proxm('d');
+    u = svc(kernel);
 end
 
 % RandomForest
@@ -63,14 +65,22 @@ if strcmp(clr,'randomforestc')
     u = scalem([], 'variance') * pcam([],frac) * randomforestc;
 end
 
+% NaiveBayes
+if strcmp(clr,'naivebc')
+    u = scalem([], 'variance') * pcam([],frac) * naivebc;
+end
+
 %% Cross-Validation
 % e1 = 0;
-e1 = prcrossval(trData,u,10,1);   % for n =1000
-% e1 = prcrossval(trData,u,10,10); % for n = 10
+% e1 = prcrossval(trData,u,10,1);   % for n =1000
+e1 = prcrossval(trData,u,[],3); % for n = 10
 
 %% Training
-% % simple train
+% simple train
 w = trData * u;
+% use log-densities for more accuracy (ldc, parzenc)
+% w = logdens(w);
+
 
 %% Evaluation
 % e = 0;

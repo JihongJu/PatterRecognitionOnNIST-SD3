@@ -1,0 +1,18 @@
+1-16-2016
+classifier, cross-validation, test
+parzenc with pca, 0.0588, 0.0630 -> 0.0558,0.0510,0.0460
+knnc with pca, 0.0635, 0.0560
+bpxnc with pca(1,50), 0.2724, 0.3350
+bpxnc with pca(3,50), 0.2725, 0.2750
+randomforestc with pca, 0.5343, 0.4940
+fisherc, 0.1628, 0.1630
+
+combined parzenc, 0.0593, 0.0430 -> 0.0538,0.0490,0.0510/Random 0.0605,0.0490,0.530
+
+parzenc, 0.0643, 0.0630, 0.0570
+
+1-21-2016
+svm kernel: Tangent distance
+
+1-22-2016
+live test: higher error as 7s have different types 7/20

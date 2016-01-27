@@ -47,7 +47,6 @@ if strcmp(clr,'knnc')
 end
 % parzenc with PCA
 if strcmp(clr,'parzenc')
-    % u = parzenc;
     u = parzenc;
 end
 
@@ -60,7 +59,9 @@ end
 
 % SVM
 if strcmp(clr,'svc')
-    kernel = proxm('p',1);
+%     kernel = proxm('p',1);
+%     kernel = proxm('d');
+    kernel = proxm('r');
     u = svc(kernel);
 end
 
@@ -73,18 +74,25 @@ end
 
 %% Cross-Validation
 % e1 = prcrossval(trData,u,10,1);   % for n =1000
-% e1 = prcrossval(trData,u,10,10); % for n = 10
+% e1 = prcrossval(trData,u,[],10); % for n = 10
 
 %% Training
 % random 25% for representation
 [repData, trData] = gendat(trData, 0.25);
+
 % train
-disSpace = (repData * proxm('d',1));
+% disSpace = (repData * proxm('d'));
+disSpace = (repData * proxm('r'));    % radial basis NOT WORK
+% disSpace = (repData * proxm('m',1));    % minkowski NO better than distance
+% disSpace = (repData * proxm('p',3));    % polynomial even worse than minkowski
+% disSpace = (repData * proxm('s'));    % sigmoid WORST
+% disSpace = (repData * proxm('o'));  % cosine ~minkowski
+
 w = trData * disSpace * u;
 
 %% Cross-Validation
-e1 = prcrossval(trData * disSpace,u,10,1);   % for n =1000
-% e1 = prcrossval(trData * disSpace,u,10,10); % for n = 10
+% e1 = prcrossval(trData * disSpace,u,10,1);   % for n =1000
+e1 = prcrossval(trData * disSpace,u,[],1); % for n = 10
 
 %% Evaluation
 D = tstData * disSpace;
