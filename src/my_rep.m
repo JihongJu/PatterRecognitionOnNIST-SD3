@@ -1,10 +1,16 @@
 function a = my_rep(m)
 
-preproc = im_box([],0,1)*im_resize([],[25 25])*im_box([],1,0);  % not aligned
+% measurement m
+
+% Preprocess
+% preproc = im_box([],0,1)*im_resize([],[20 20])*im_box([],1,0);
+preproc = im_rotate([], 220)*im_box([],0,1)*im_resize([],[20 20]);
 im = m * preproc *datasetm;
 
-labs = [];
-for i = 1:10
-    labs = [labs; (i-1)*ones(100,1)];
+% labels
+labs = getlabels(im);
+
+% dataset
+a = prdataset(+im,labs);
+
 end
-a = prdataset(+im,100);
